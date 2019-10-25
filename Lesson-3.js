@@ -76,9 +76,9 @@ for(var i = 0; i < 10; console.log(i++)) {
 
 for(var i = 0; i < 20; i++) {
   
-  var star= "*";
+  var star= "";
   
-  for(var z = 0; z < i; z++) {
+  for(var z = 0; z <= i; z++) {
     star += "*";
   }
   
