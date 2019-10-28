@@ -53,7 +53,7 @@ switch (event) {
 }
 
 
-// Записываем текст выбранных вопросов и ответов по сохраненному коду коду
+// Записываем текст выбранных вопросов и ответов по сохраненному коду
 for (var i = 0; i < savedCodeQuestions.length; i++) {
     textWritedQuestions += "  " + (i+1) + " - Код вороса: " + savedCodeQuestions[i][0] + "\n";
 }
