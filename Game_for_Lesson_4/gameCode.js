@@ -1,4 +1,4 @@
-var event, ok, savedQuestions = [];
+var event, ok, savedCodeQuestions = [], textWritedQuestions = "";
 
 
 // Все циклы вывода вопросов и ответов убраны в функцию "displayOfQuestion( param: codeQuestion )"
@@ -52,36 +52,36 @@ switch (event) {
         alert('Ошибка');
 }
 
-// console.log(savedQuestions)
 
+// Записываем текст выбранных вопросов и ответов по сохраненному коду коду
+for (var i = 0; i < savedCodeQuestions.length; i++) {
+    textWritedQuestions += "  " + (i+1) + " - Код вороса: " + savedCodeQuestions[i][0] + "\n";
+}
 
-// Выодим возможномть выбора выбранных ранее вопросов и ответов
+// Выводим список выбранных вопросов и ответов
 do {
 
     ok = false;
 
-    var text = "";
-    for (var i = 0; i < savedQuestions.length; i++) {
-        text += "  " + (i+1) + "  Код вороса: " + savedQuestions[i][0] + "\n";
-    }
-
-    event = +prompt("Просмотр истории игры.\nВведите номер хода:\n" + text + '-1 - Выход из истории игры');
+    event = +prompt("Просмотр истории игры.\nВведите номер хода:\n" + textWritedQuestions + '-1 - Выход из истории игры');
 
     if (event == -1) {
         break;
     }
     else {
-        if (!isAnswer(savedQuestions.length, event)) {
+        if (!isAnswer(savedCodeQuestions.length, event)) {
             continue;
         }
     }
 
-    alert("Вопрос:\n" + works[savedQuestions[event-1][0]] + "\nОтвет:\n" + works[savedQuestions[event-1][1]]);
+    alert("Вопрос:\n" + works[savedCodeQuestions[event-1][0]] + "\nОтвет:\n" + works[savedCodeQuestions[event-1][1]]);
 
 } while (1);
 
 
 alert('Спасибо за игру');
+
+
 
 //------------------------------------------
 
@@ -117,8 +117,8 @@ function displayOfQuestion(codeQuestion) {
     } while (!ok);
 
 
-    // Сохраняем коды вариантов вопросов и ответов
-    savedQuestions.push([codeQuestion, lettersQuestions + event]);
+    // Сохраняем коды выбранных вариантов вопросов и ответов
+    savedCodeQuestions.push([codeQuestion, lettersQuestions + event]);
 }
 
 
