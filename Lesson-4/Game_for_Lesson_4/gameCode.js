@@ -53,7 +53,7 @@ switch (event) {
 }
 
 
-// Записываем текст выбранных вопросов и ответов по сохраненному коду
+// Оформляем текст пройденных вопросов и ответов по сохраненному коду
 for (var i = 0; i < savedCodeQuestions.length; i++) {
     textWritedQuestions += "  " + (i+1) + " - Код вороса: " + savedCodeQuestions[i][0] + "\n";
 }
@@ -92,16 +92,16 @@ function displayOfQuestion(codeQuestion) {
     // Отделяем буквенные символы от кода вопроса, что бы в последующем найти по ним варианты ответов
     var lettersQuestions = codeQuestion.substr(0, codeQuestion.indexOf("0"));
 
-    // Получаем числовое колличество ответов
+    // Получаем числовое колличество ответов из файла с данными
     var countAnswers = works[lettersQuestions + "0"];
 
-    // Записываем вопрос в переменную, в последующем будем добовлять к ней ответы
+    // Записываем текст вопроса и в последующем будем приписывать ответы
     var textQuestAndAnswer = works[codeQuestion];
 
     
     for (var i = 1; i <= countAnswers; i++) {
 
-        // Дописываем к вопросу, все варианты ответов
+        // Дописываем к вопросу, все варианты ответов: a1, a2, ... an
         textQuestAndAnswer += works[lettersQuestions + i];
     }
 
@@ -115,7 +115,6 @@ function displayOfQuestion(codeQuestion) {
             ok = isAnswer(countAnswers, event);
         }
     } while (!ok);
-
 
     // Сохраняем коды выбранных вариантов вопросов и ответов
     savedCodeQuestions.push([codeQuestion, lettersQuestions + event]);
