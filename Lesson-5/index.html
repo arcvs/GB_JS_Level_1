@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  
+  <style>
+
+    #field {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      counter-reset: chartop charbottom numleft -9 numright -9;
+      margin: 30px;
+    }
+    
+    #field div {
+      position: relative;
+      float: left;
+      width: 12.5%;
+      height: 12.5%;
+      margin: auto auto;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    #field div:hover {
+      opacity: 0.6;
+    }
+
+    #field div:nth-child(2n+1) {
+      background-color: bisque;
+    }
+    #field div:nth-child(2n+2) {
+      background-color: #b9a05c;
+    }
+    
+    #field div:nth-child(2n+10) {
+      background-color: bisque;
+    }
+    #field div:nth-child(2n+9) {
+      background-color: #b9a05c;
+    }
+
+    #field div:nth-child(2n+17) {
+      background-color: bisque;
+    }
+    #field div:nth-child(2n+18) {
+      background-color: #b9a05c;
+    }
+
+    #field div:nth-child(2n+26) {
+      background-color: bisque;
+    }
+    #field div:nth-child(2n+25) {
+      background-color: #b9a05c;
+    }
+
+    #field div:nth-child(2n+33) {
+      background-color: bisque;
+    }
+    #field div:nth-child(2n+34) {
+      background-color: #b9a05c;
+    }
+
+    #field div:nth-child(2n+42) {
+      background-color: bisque;
+    }
+    #field div:nth-child(2n+41) {
+      background-color: #b9a05c;
+    }
+
+    #field div:nth-child(2n+49) {
+      background-color: bisque;
+    }
+    #field div:nth-child(2n+50) {
+      background-color: #b9a05c;
+    }
+
+    #field div:nth-child(2n+58) {
+      background-color: bisque;
+    }
+    #field div:nth-child(2n+57) {
+      background-color: #b9a05c;
+    }
+
+    #field div:nth-child(-n+8):after,
+    #field div:nth-child(n+57):after,
+    #field div:nth-child(-8n+57):before,
+    #field div:nth-child(8n):before {
+      position: absolute;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+    }
+    
+    
+    #field div:nth-child(-n+8):after {
+      counter-increment: chartop;
+      content: counter(chartop, lower-alpha);
+      position: absolute;
+      top: -25px;
+    }
+    
+    #field div:nth-child(n+57):after {
+      counter-increment: charbottom;
+      content: counter(charbottom, lower-alpha);
+      position: absolute;
+      bottom: -45px;
+    }
+    
+    #field div:nth-child(-8n+57):before {
+      counter-increment: numleft;
+      content: counter(numleft);
+      position: absolute;
+      left: -25px;
+    }
+
+    #field div:nth-child(8n):before {
+      counter-increment: numright;
+      content: counter(numright);
+      position: absolute;
+      right: -50px;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <div id="field"></div>
+
+  <script>
+
+    var cell = [], field = document.getElementById("field");
+
+    for(var i = 1; i <= 8*8; i++) {
+
+      cell[i] = document.createElement("div");
+
+      if ( i>8 && i <17) {
+        cell[i].innerHTML = "p";
+      }
+      if ( i>48 && i <57) {
+        cell[i].innerHTML = "p";
+      }
+
+      field.appendChild( cell[i] );
+    }
+
+    //var cell = document.createElement("div");
+    //newLi.innerHTML = "Привет, мир!";
+    //field.appendChild(cell);
+
+    // for (var i = 65; i < 73; i++) {
+    //   document.body.innerHTML += String.fromCharCode( i+32 );
+    // }
+
+    // for (var i = 17; i < 25; i++) {
+    //   document.body.innerHTML += String.fromCharCode( i+32 );
+    // }
+
+  </script>
+  
+</body>
+</html>
