@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  
-  <style>
 
-    #field {
+  <style>
+    /* #field {
       width: 400px;
       height: 400px;
     }
@@ -17,27 +17,27 @@
       float: left;
       width: 10%;
       height: 10%;
-      /* width: 12.5%;
-      height: 12.5%; */
-      /* margin: auto auto; */
-      background-color:linen;
+      width: 12.5%;
+      height: 12.5%;
+      margin: auto auto; */
+    /* background-color:linen;
       font-size: 20px;
       text-align: center;
       color: black;
-    }
+    } */
 
-    #b3 div:nth-child(n+12):nth-child(-n+19):nth-child(even),
-    #b3 div:nth-child(n+22):nth-child(-n+29):nth-child(odd),
+    /* #b3 div:nth-child(n8):nth-child(even),
+    #b3 div:nth-child(n+9):nth-child(-n+16):nth-child(odd),
     #b3 div:nth-child(n+32):nth-child(-n+39):nth-child(even),
     #b3 div:nth-child(n+42):nth-child(-n+49):nth-child(odd),
     #b3 div:nth-child(n+52):nth-child(-n+59):nth-child(even),
     #b3 div:nth-child(n+62):nth-child(-n+69):nth-child(odd),
     #b3 div:nth-child(n+72):nth-child(-n+79):nth-child(even),
-    #b3 div:nth-child(n+82):nth-child(-n+89):nth-child(odd) {
+    #b3 div:nth-child(n+56):nth-child(-n+64):nth-child(odd) {
       background-color: ivory;
-    }
-    #b3 div:nth-child(n+12):nth-child(-n+19):nth-child(odd),
-    #b3 div:nth-child(n+22):nth-child(-n+29):nth-child(even),
+    } */
+    /* #b3 div:nth-child(n8):nth-child(odd),
+    #b3 div:nth-child(n+9):nth-child(-n+16):nth-child(even),
     #b3 div:nth-child(n+32):nth-child(-n+39):nth-child(odd),
     #b3 div:nth-child(n+42):nth-child(-n+49):nth-child(even),
     #b3 div:nth-child(n+52):nth-child(-n+59):nth-child(odd),
@@ -45,48 +45,83 @@
     #b3 div:nth-child(n+72):nth-child(-n+79):nth-child(odd),
     #b3 div:nth-child(n+82):nth-child(-n+89):nth-child(even) {
       background-color: burlywood;
-    }
-    #field div:nth-child(-n+10) {
+    } */
+    /* #field div:nth-child(-n+10) {
       transform: rotate(-180deg);
     }
     #field div:nth-child(-10n+100) {
       transform: rotate(-180deg);
-    }
+    } */
+
     #a1 {
-      width: 400px;
-      height: 400px;
+      width: 500px;
+      height: 500px;
     }
+
     #a1 div {
       display: inline-block;
       text-align: center;
+      box-sizing: border-box;
     }
-    #b1, #b5 {
+
+    #b1,
+    #b5 {
       width: 100%;
       height: 10%;
+      background-color: blanchedalmond;
     }
-    #b2, #b4 {
+
+    #b2,
+    #b4 {
       width: 10%;
       height: 80%;
       background-color: blanchedalmond;
     }
+
     #b3 {
       width: 80%;
       height: 80%;
     }
+
+    #b3 div {
+      float: left;
+      width: 12.5%;
+      height: 12.5%;
+      /* line-height:100%; */
+      /* margin: 0; */
+      /* background-color:linen; */
+      font-size: 20px;
+      text-align: center;
+    }
+
+    #b3 {
+      background-image:
+        linear-gradient(45deg, burlywood 25%, transparent 25%),
+        linear-gradient(-45deg, burlywood 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, burlywood 75%),
+        linear-gradient(-45deg, transparent 75%, burlywood 75%);
+      background-size: 25% 25%;
+      background-position: 0 0, 0 16.65%, 16.65% -16.65%, -16.65% 0;
+    }
   </style>
 </head>
+
 <body>
 
-  <div class="wrap">
+  <!-- <div class="wrap">
     <div id="letter_top"></div>
     <div id="number_left"></div>
     <div id="field"></div>
     <div id="number_right"></div>
     <div id="letter_bottom"></div>
-  </div>
+  </div> -->
 
   <div id="a1">
-    <div id="b1">1</div><div id="b2">2</div><div id="b3"></div><div id="b4">4</div><div id="b5">5</div>
+    <div id="b1">1</div>
+    <div id="b2">2</div>
+    <div id="b3"></div>
+    <div id="b4">4</div>
+    <div id="b5">5</div>
   </div>
 
 
@@ -94,31 +129,38 @@
 
     var cell = [], field = document.getElementById("b3");
 
-
-
     var number = 8;
-    
-    function displaySymbol(cell, i) {
 
-      var letters = ['a','b','c','d','e','f','g','h'];
-      // var numright = ['8','7','6','5','4','3','2','1'];
+    // function createElementForSymbol(symbol) {
+    //   var newLi = document.createElement("span");
+    //   newLi.innerHTML = symbol;
+    //   list.appendChild(newLi);
+    // }
 
-      if (i > 1 && i < 10) {
-        cell[i].innerText = letters[i-2];
+    function displaySymbols(cell, i) {
+
+      var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+      if (i >= 1 && i <= 8) {
+        cell[i].innerHTML = "<span>" + letters[i - 1] + "</span>";
       }
-      if (i > 91 && i < 100) {
-        cell[i].innerText = letters[i-92];
+      if (i >= 57 && i <= 64) {
+        cell[i].innerHTML = "<span>" + letters[i - 57] + "</span>";
       }
-      if (i%10 == 1 && i > 1 && i < 91) {
-        cell[i].innerText = number;
+      if (i % 8 == 1) {
+        cell[i].innerHTML = "<span>" + number + "</span>";
       }
-      if (i%10 == 0 && i > 10 && i < 91) {
+      if (i % 8 == 0) {
         cell[i].innerText = number--;
       }
     }
 
-    function displayChess(i){
-      if ( i == 22 ) {
+    for (var i = 1; i <= 8 * 8; i++) {
+
+    }
+
+    function displayChess(i) {
+      if (i == 22) {
         return "&#x2654;";
       }
       return '';
@@ -126,24 +168,25 @@
 
 
 
-    for(var i = 1; i <= 10*10; i++) {
+    for (var i = 1; i <= 8 * 8; i++) {
 
       cell[i] = document.createElement("div");
 
-      // displaySymbol(cell, i);
+      displaySymbols(cell, i);
       // cell[i].innerHTML = displaySymbol(i);
 
-      field.appendChild( cell[i] );
+      field.appendChild(cell[i]);
     }
 
-    for (var i = 0; i < 8; i++) {
-      document.body.innerHTML += String.fromCharCode( i+97 );
-    }
-    for (var i = 0; i < 8; i++) {
-      document.body.innerHTML += String.fromCharCode( i+49 );
-    }
+    // for (var i = 0; i < 8; i++) {
+    //   document.body.innerHTML += String.fromCharCode( i+97 );
+    // }
+    // for (var i = 0; i < 8; i++) {
+    //   document.body.innerHTML += String.fromCharCode( i+49 );
+    // }
 
   </script>
-  
+
 </body>
+
 </html>
