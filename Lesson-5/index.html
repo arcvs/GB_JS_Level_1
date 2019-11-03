@@ -56,6 +56,9 @@
       font: 35px Verdana;
       cursor: pointer;
     }
+    span:nth-child(1) {
+      /* color: red; */
+    }
     .select {
       border: 2px solid #1fc41f;
     }
@@ -94,7 +97,8 @@
       {n:'p',side:0,form:'&#9823;',pos:11}, {n:'p',side:0,form:'&#9823;',pos:12},
       {n:'p',side:0,form:'&#9823;',pos:13}, {n:'p',side:0,form:'&#9823;',pos:14},
       {n:'p',side:0,form:'&#9823;',pos:15}, {n:'p',side:0,form:'&#9823;',pos:16},
-
+      // {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 
+      // {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 
       {n:'K',side:1,form:'&#9812;',pos:61}, {n:'Q',side:1,form:'&#9813;',pos:60},
       {n:'R',side:1,form:'&#9814;',pos:57}, {n:'R',side:1,form:'&#9814;',pos:64},
       {n:'N',side:1,form:'&#9816;',pos:58}, {n:'N',side:1,form:'&#9816;',pos:63},
@@ -114,22 +118,27 @@
       p: [1,+8,+16]
     };
 
-    for (var i = 1; i <= 8 * 8; i++) {
+    // Инициализация поля - отображение нотации и расстановка фигур
 
+    for (var i = 1; i <= 8 * 8; i++) {
       cellsDOM[i] = document.createElement("div");
+      cellsDOM[i].addEventListener("click", selectedFigure);
+      cellsDOM[i].setAttribute("xpos", i);
+
       displayNotation(cellsDOM[i], i);
       displayChess(cellsDOM[i], i);
+
       fieldDOM.appendChild(cellsDOM[i]);
     }
 
 
-    function updateDisaplayField(xpos) {
+    function renderDisaplayField(xpos) {
       
       var cellsDOM = fieldDOM.querySelectorAll('div');
 
       for (var i = 0; i < 8 * 8; i++) {
 
-        var span = cellsDOM[i].querySelector("span");
+        var span = cellsDOM[i].querySelector("div");
 
         if (span != undefined ) {
           cellsDOM[i].removeChild(span);
@@ -140,46 +149,66 @@
         }
 
         displayChess(cellsDOM[i], i+1);
-        calculationOfMoves(cellsDOM[i], xpos);
+        // calculationOfMoves(cellsDOM[i], xpos);
       }
     }
 
 
-    function calculationOfMoves(div, xpos) {
+    // function calculationOfMoves(div, xpos) {
 
-      for (var move in availableMoves) {
-        if (availableMoves[move].pos == xpos) {
-          activeFigure = availableMoves[move];
-          console.log(activeFigure);
-          return 1;
-        }
-      }
-    }
+    //   for (var move in availableMoves) {
+
+    //     if (availableMoves[move].pos == xpos) {
+    //       activeFigure = availableMoves[move];
+    //       console.log(activeFigure);
+    //       return 1;
+    //     }
+    //   }
+    // }
 
 
     function selectedFigure(event) {
+      // var xpos = event.target.attributes.xpos.value;
+      // var selectCell = fieldDOM.querySelectorAll('div');
+      // var ss = fieldDOM.getElementsByClassName('select');
 
-      var xpos = event.target.attributes.xpos.value;
-      var selectCell = fieldDOM.querySelectorAll('div');
+      // selectCell[xpos-1].classList.add("select");
 
-      selectCell[xpos-1].classList.add("select");
+      this.classList.add("select");
+
+      // var aa = fieldDOM.getRootNode(this);
+
+      // field[i].active = "1";
       // activeFigure = figures[xpos-1];
-      updateDisaplayField(xpos);
+
+      
+      // renderDisaplayField(xpos);
+
+
       // console.log(selectCell);
-      // console.log(xpos);
+      // console.log(selectCell.indexOf);
+
+      // console.log(fieldDOM.getElementsByClassName("select"));
+      
+      // fieldDOM.getElementsByClassName(".select");
+      console.log(this);
     }
 
     function displayChess(cell, i) {
+
+      field[i] = {xpos: i};
+
       for (var figure in figures) {
         if (figures[figure].pos == i) {
           var span = document.createElement("span");
           span.innerHTML = figures[figure].form;
-          span.setAttribute("xpos", i);
+          field[i].n = figures[figure].n;
           // span.setAttribute("name_figure", figures[figure].n);
-          span.addEventListener("click", selectedFigure);
+          // cell.addEventListener("click", selectedFigure);
           cell.appendChild(span);
         }
       }
+      console.log(field[i]);
     }
 
     function displayNotation(cell, i) {
