@@ -3,187 +3,209 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <title>Chess</title>
 
   <style>
-    /* #field {
+    #field {
       width: 400px;
       height: 400px;
+      margin: 0 auto;
+      user-select: none;
     }
-    
-    #b3 div {
+    #field div {
+      position: relative;
       float: left;
-      width: 10%;
-      height: 10%;
       width: 12.5%;
       height: 12.5%;
-      margin: auto auto; */
-    /* background-color:linen;
-      font-size: 20px;
-      text-align: center;
-      color: black;
-    } */
-
-    /* #b3 div:nth-child(n8):nth-child(even),
-    #b3 div:nth-child(n+9):nth-child(-n+16):nth-child(odd),
-    #b3 div:nth-child(n+32):nth-child(-n+39):nth-child(even),
-    #b3 div:nth-child(n+42):nth-child(-n+49):nth-child(odd),
-    #b3 div:nth-child(n+52):nth-child(-n+59):nth-child(even),
-    #b3 div:nth-child(n+62):nth-child(-n+69):nth-child(odd),
-    #b3 div:nth-child(n+72):nth-child(-n+79):nth-child(even),
-    #b3 div:nth-child(n+56):nth-child(-n+64):nth-child(odd) {
-      background-color: ivory;
-    } */
-    /* #b3 div:nth-child(n8):nth-child(odd),
-    #b3 div:nth-child(n+9):nth-child(-n+16):nth-child(even),
-    #b3 div:nth-child(n+32):nth-child(-n+39):nth-child(odd),
-    #b3 div:nth-child(n+42):nth-child(-n+49):nth-child(even),
-    #b3 div:nth-child(n+52):nth-child(-n+59):nth-child(odd),
-    #b3 div:nth-child(n+62):nth-child(-n+69):nth-child(even),
-    #b3 div:nth-child(n+72):nth-child(-n+79):nth-child(odd),
-    #b3 div:nth-child(n+82):nth-child(-n+89):nth-child(even) {
-      background-color: burlywood;
-    } */
-    /* #field div:nth-child(-n+10) {
-      transform: rotate(-180deg);
-    }
-    #field div:nth-child(-10n+100) {
-      transform: rotate(-180deg);
-    } */
-
-    #a1 {
-      width: 500px;
-      height: 500px;
-    }
-
-    #a1 div {
-      display: inline-block;
       text-align: center;
       box-sizing: border-box;
     }
-
-    #b1,
-    #b5 {
-      width: 100%;
-      height: 10%;
-      background-color: blanchedalmond;
-    }
-
-    #b2,
-    #b4 {
-      width: 10%;
-      height: 80%;
-      background-color: blanchedalmond;
-    }
-
-    #b3 {
-      width: 80%;
-      height: 80%;
-    }
-
-    #b3 div {
-      float: left;
-      width: 12.5%;
-      height: 12.5%;
-      /* line-height:100%; */
-      /* margin: 0; */
-      /* background-color:linen; */
-      font-size: 20px;
-      text-align: center;
-    }
-
-    #b3 {
+    #field {
       background-image:
         linear-gradient(45deg, burlywood 25%, transparent 25%),
         linear-gradient(-45deg, burlywood 25%, transparent 25%),
         linear-gradient(45deg, transparent 75%, burlywood 75%),
         linear-gradient(-45deg, transparent 75%, burlywood 75%);
       background-size: 25% 25%;
-      background-position: 0 0, 0 16.65%, 16.65% -16.65%, -16.65% 0;
+      background-position: 0 0, 0 16.64%, 16.64% -16.64%, -16.64% 0;
     }
+    #field>div>em {
+      position: absolute;
+      font: bold 10px Verdana;
+    }
+    #field div .top {
+      left: 3px;
+      transform: rotate(180deg);
+    }
+    #field div .right {
+      transform: rotate(180deg);
+      right: 3px;
+    }
+    #field div .bottom {
+      bottom: 0;
+      right: 3px;
+    }
+    #field div .left {
+      left: 3px;
+      bottom: 0;
+    }
+    #field div span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      font: 35px Verdana;
+      cursor: pointer;
+    }
+    .select {
+      border: 2px solid #1fc41f;
+    }
+    #field div span:hover {
+      outline: 1px solid #1fc41f;
+    }
+    .moved:after {
+      height: 100%;
+      width: 100%;
+      background-color: #1fc41f;
+      opacity: 0.5;
+    }
+    #field div span:moved {
+      /* outline: 1px solid #1fc41f; */
+    }
+
   </style>
 </head>
 
 <body>
 
-  <!-- <div class="wrap">
-    <div id="letter_top"></div>
-    <div id="number_left"></div>
-    <div id="field"></div>
-    <div id="number_right"></div>
-    <div id="letter_bottom"></div>
-  </div> -->
-
-  <div id="a1">
-    <div id="b1">1</div>
-    <div id="b2">2</div>
-    <div id="b3"></div>
-    <div id="b4">4</div>
-    <div id="b5">5</div>
-  </div>
-
+  <div id="field"></div>
 
   <script>
 
-    var cell = [], field = document.getElementById("b3");
+    "use strict"
 
-    var number = 8;
+    var cellsDOM = [], fieldDOM = document.getElementById("field"), field= [], numNotation = 8, activeFigure;
 
-    // function createElementForSymbol(symbol) {
-    //   var newLi = document.createElement("span");
-    //   newLi.innerHTML = symbol;
-    //   list.appendChild(newLi);
-    // }
+    var figures = [
+      {n:'K',side:0,form:'&#9818;',pos:5}, {n:'Q',side:0,form:'&#9819;',pos:4},
+      {n:'R',side:0,form:'&#9820;',pos:1}, {n:'R',side:0,form:'&#9820;',pos:8},
+      {n:'N',side:0,form:'&#9822;',pos:2}, {n:'N',side:0,form:'&#9822;',pos:7},
+      {n:'B',side:0,form:'&#9821;',pos:3}, {n:'B',side:0,form:'&#9821;',pos:6},
+      {n:'p',side:0,form:'&#9823;',pos:9}, {n:'p',side:0,form:'&#9823;',pos:10},
+      {n:'p',side:0,form:'&#9823;',pos:11}, {n:'p',side:0,form:'&#9823;',pos:12},
+      {n:'p',side:0,form:'&#9823;',pos:13}, {n:'p',side:0,form:'&#9823;',pos:14},
+      {n:'p',side:0,form:'&#9823;',pos:15}, {n:'p',side:0,form:'&#9823;',pos:16},
 
-    function displaySymbols(cell, i) {
+      {n:'K',side:1,form:'&#9812;',pos:61}, {n:'Q',side:1,form:'&#9813;',pos:60},
+      {n:'R',side:1,form:'&#9814;',pos:57}, {n:'R',side:1,form:'&#9814;',pos:64},
+      {n:'N',side:1,form:'&#9816;',pos:58}, {n:'N',side:1,form:'&#9816;',pos:63},
+      {n:'B',side:1,form:'&#9815;',pos:59}, {n:'B',side:1,form:'&#9815;',pos:62},
+      {n:'p',side:1,form:'&#9817;',pos:49}, {n:'p',side:1,form:'&#9817;',pos:50},
+      {n:'p',side:1,form:'&#9817;',pos:51}, {n:'p',side:1,form:'&#9817;',pos:52},
+      {n:'p',side:1,form:'&#9817;',pos:53}, {n:'p',side:1,form:'&#9817;',pos:54},
+      {n:'p',side:1,form:'&#9817;',pos:55}, {n:'p',side:1,form:'&#9817;',pos:56}
+    ];
 
-      var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    var availableMoves = {
+      K: [1,+9,+8,+7,+1,-1,-7,-8,-9], 
+      Q: [0,+9,+8,+7,+1,-1,-7,-8,-9],
+      R: [0,+8,+1,-1,-8], 
+      B: [0,+9,+7,-7,-9],
+      N: [1,+17,+15,+10,+6,-6,-10,-15,-17],
+      p: [1,+8,+16]
+    };
+
+    for (var i = 1; i <= 8 * 8; i++) {
+
+      cellsDOM[i] = document.createElement("div");
+      displayNotation(cellsDOM[i], i);
+      displayChess(cellsDOM[i], i);
+      fieldDOM.appendChild(cellsDOM[i]);
+    }
+
+
+    function updateDisaplayField(xpos) {
+      
+      var cellsDOM = fieldDOM.querySelectorAll('div');
+
+      for (var i = 0; i < 8 * 8; i++) {
+
+        var span = cellsDOM[i].querySelector("span");
+
+        if (span != undefined ) {
+          cellsDOM[i].removeChild(span);
+        }
+
+        if (xpos != i+1) {
+          cellsDOM[i].classList.remove("select");
+        }
+
+        displayChess(cellsDOM[i], i+1);
+        calculationOfMoves(cellsDOM[i], xpos);
+      }
+    }
+
+
+    function calculationOfMoves(div, xpos) {
+
+      for (var move in availableMoves) {
+        if (availableMoves[move].pos == xpos) {
+          activeFigure = availableMoves[move];
+          console.log(activeFigure);
+          return 1;
+        }
+      }
+    }
+
+
+    function selectedFigure(event) {
+
+      var xpos = event.target.attributes.xpos.value;
+      var selectCell = fieldDOM.querySelectorAll('div');
+
+      selectCell[xpos-1].classList.add("select");
+      // activeFigure = figures[xpos-1];
+      updateDisaplayField(xpos);
+      // console.log(selectCell);
+      // console.log(xpos);
+    }
+
+    function displayChess(cell, i) {
+      for (var figure in figures) {
+        if (figures[figure].pos == i) {
+          var span = document.createElement("span");
+          span.innerHTML = figures[figure].form;
+          span.setAttribute("xpos", i);
+          // span.setAttribute("name_figure", figures[figure].n);
+          span.addEventListener("click", selectedFigure);
+          cell.appendChild(span);
+        }
+      }
+    }
+
+    function displayNotation(cell, i) {
 
       if (i >= 1 && i <= 8) {
-        cell[i].innerHTML = "<span>" + letters[i - 1] + "</span>";
+        addElToLetterNum(cell, String.fromCharCode(i + 96), "top");
       }
-      if (i >= 57 && i <= 64) {
-        cell[i].innerHTML = "<span>" + letters[i - 57] + "</span>";
+      else if (i >= 57 && i <= 64) {
+        addElToLetterNum(cell, String.fromCharCode(i + 97 - 57), "bottom");
       }
       if (i % 8 == 1) {
-        cell[i].innerHTML = "<span>" + number + "</span>";
+        addElToLetterNum(cell, numNotation, "left");
       }
-      if (i % 8 == 0) {
-        cell[i].innerText = number--;
+      else if (i % 8 == 0) {
+        addElToLetterNum(cell, numNotation--, "right");
+      }
+
+      function addElToLetterNum(cell, letterNum, className) {
+        var span = document.createElement("em");
+        span.className = className;
+        span.innerHTML = letterNum;
+        cell.appendChild(span);
       }
     }
 
-    for (var i = 1; i <= 8 * 8; i++) {
-
-    }
-
-    function displayChess(i) {
-      if (i == 22) {
-        return "&#x2654;";
-      }
-      return '';
-    }
-
-
-
-    for (var i = 1; i <= 8 * 8; i++) {
-
-      cell[i] = document.createElement("div");
-
-      displaySymbols(cell, i);
-      // cell[i].innerHTML = displaySymbol(i);
-
-      field.appendChild(cell[i]);
-    }
-
-    // for (var i = 0; i < 8; i++) {
-    //   document.body.innerHTML += String.fromCharCode( i+97 );
-    // }
-    // for (var i = 0; i < 8; i++) {
-    //   document.body.innerHTML += String.fromCharCode( i+49 );
-    // }
+    //  ... Дополнительные возможности ...
 
   </script>
 
