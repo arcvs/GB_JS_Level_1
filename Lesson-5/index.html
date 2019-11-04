@@ -3,72 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
   <title>Chess</title>
-
-  <style>
-    #field {
-      width: 400px;
-      height: 400px;
-      margin: 0 auto;
-      user-select: none;
-    }
-
-    #field div {
-      position: relative;
-      float: left;
-      width: 12.5%;
-      height: 12.5%;
-      text-align: center;
-      box-sizing: border-box;
-    }
-
-    #field div.select {
-      background-color: #abd4ab;
-    }
-
-    #field {
-      background-image:
-        linear-gradient(45deg, burlywood 25%, transparent 25%),
-        linear-gradient(-45deg, burlywood 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, burlywood 75%),
-        linear-gradient(-45deg, transparent 75%, burlywood 75%);
-      background-size: 25% 25%;
-      background-position: 0 0, 0 16.64%, 16.64% -16.64%, -16.64% 0;
-    }
-
-    #field>div>em {
-      position: absolute;
-      font: bold 10px Verdana;
-    }
-
-    #field div .top {
-      left: 3px;
-      transform: rotate(180deg);
-    }
-
-    #field div .right {
-      transform: rotate(180deg);
-      right: 3px;
-    }
-
-    #field div .bottom {
-      bottom: 0;
-      right: 3px;
-    }
-
-    #field div .left {
-      left: 3px;
-      bottom: 0;
-    }
-
-    #field div span {
-      display: block;
-      width: 100%;
-      height: 100%;
-      font: 35px Verdana;
-      cursor: pointer;
-    }
-  </style>
 </head>
 
 <body>
@@ -135,13 +71,13 @@
       else if ((i + 1) % 8 == 0) {
         addElToLetterNum(_cellDOM, numNotation--, "right");
       }
+    }
 
-      function addElToLetterNum(_cellDOM, letterNum, className) {
-        var span = document.createElement("em");
-        span.className = className;
-        span.innerHTML = letterNum;
-        _cellDOM.appendChild(span);
-      }
+    function addElToLetterNum(_cellDOM, letterNum, className) {
+      var span = document.createElement("em");
+      span.className = className;
+      span.innerHTML = letterNum;
+      _cellDOM.appendChild(span);
     }
   </script>
 

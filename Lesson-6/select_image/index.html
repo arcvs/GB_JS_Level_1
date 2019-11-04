@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Select image</title>
+  <style>
+    #small_img img {
+      width: 150px;
+      margin: 5px 10px;
+      cursor: pointer;
+    }
+
+    #big_img img {
+      width: 490px;
+      margin: 5px 10px;
+    }
+
+    #big_img div {
+      width: 490px;
+      margin: 5px 10px;
+      font: 500 25px Arial;
+      text-align: center;
+      padding-top: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="small_img"></div>
+  <div id="big_img"></div>
+
+  <script>
+
+    "use strict"
+
+    var blockDOMSmallImg = document.getElementById("small_img");
+    var blockDOMBigImg = document.getElementById("big_img");
+
+    var folderToImage = {
+      folder_small: "img_small/",
+      folder_big: "img_big/"
+    };
+
+    var baseCar = [
+      { name: "Lexus_2019_RC_F" },
+      { name: "Lexus_2019_UX_200" },
+      { name: "Lexus_2019_RX_350" }
+    ];
+
+    var newImgElement;
+
+
+    for (var i = 0; i < baseCar.length; i++) {
+
+      newImgElement = createElementImg("folder_small", i);
+      newImgElement.addEventListener("click", displayBigImage);
+
+      blockDOMSmallImg.appendChild(newImgElement);
+    }
+
+
+    function displayBigImage(event) {
+
+      var idImage = event.target.id;
+      blockDOMBigImg.innerHTML = "";
+
+      newImgElement = createElementImg("folder_big", idImage);
+
+      newImgElement.onerror = checkErrorOnloadImage;
+      newImgElement.onload = checkLoadImage;
+    }
+
+    function checkErrorOnloadImage() {
+      var textMessage = document.createElement("div");
+      textMessage.innerHTML = "Ошибка загрузки изображения";
+      blockDOMBigImg.appendChild(textMessage);
+    }
+
+    function checkLoadImage() {
+      blockDOMBigImg.appendChild(newImgElement);
+    }
+
+
+    function createElementImg(nameFolder, id) {
+
+      var pathToImg = folderToImage[nameFolder] + baseCar[id].name + ".jpg";
+
+      var newElem = document.createElement("img");
+      newElem.setAttribute("src", pathToImg);
+      newElem.setAttribute("id", id);
+      return newElem;
+    }
+  </script>
+</body>
+
+</html>
