@@ -86,27 +86,27 @@
 
     "use strict"
 
-    var cellsDOM = [], fieldDOM = document.getElementById("field"), field= [], numNotation = 8, activeFigure;
+    var fieldDOM = document.getElementById("field"), cellsDOM = [], numNotation = 8, selectedCell = -1;
 
-    var figures = [
-      {n:'K',side:0,form:'&#9818;',pos:5}, {n:'Q',side:0,form:'&#9819;',pos:4},
-      {n:'R',side:0,form:'&#9820;',pos:1}, {n:'R',side:0,form:'&#9820;',pos:8},
-      {n:'N',side:0,form:'&#9822;',pos:2}, {n:'N',side:0,form:'&#9822;',pos:7},
-      {n:'B',side:0,form:'&#9821;',pos:3}, {n:'B',side:0,form:'&#9821;',pos:6},
-      {n:'p',side:0,form:'&#9823;',pos:9}, {n:'p',side:0,form:'&#9823;',pos:10},
-      {n:'p',side:0,form:'&#9823;',pos:11}, {n:'p',side:0,form:'&#9823;',pos:12},
-      {n:'p',side:0,form:'&#9823;',pos:13}, {n:'p',side:0,form:'&#9823;',pos:14},
-      {n:'p',side:0,form:'&#9823;',pos:15}, {n:'p',side:0,form:'&#9823;',pos:16},
-      // {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 
-      // {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 
-      {n:'K',side:1,form:'&#9812;',pos:61}, {n:'Q',side:1,form:'&#9813;',pos:60},
-      {n:'R',side:1,form:'&#9814;',pos:57}, {n:'R',side:1,form:'&#9814;',pos:64},
-      {n:'N',side:1,form:'&#9816;',pos:58}, {n:'N',side:1,form:'&#9816;',pos:63},
-      {n:'B',side:1,form:'&#9815;',pos:59}, {n:'B',side:1,form:'&#9815;',pos:62},
-      {n:'p',side:1,form:'&#9817;',pos:49}, {n:'p',side:1,form:'&#9817;',pos:50},
-      {n:'p',side:1,form:'&#9817;',pos:51}, {n:'p',side:1,form:'&#9817;',pos:52},
-      {n:'p',side:1,form:'&#9817;',pos:53}, {n:'p',side:1,form:'&#9817;',pos:54},
-      {n:'p',side:1,form:'&#9817;',pos:55}, {n:'p',side:1,form:'&#9817;',pos:56}
+    var field = [
+      {n:'R',side:0,form:'&#9820;'}, {n:'N',side:0,form:'&#9822;'},
+      {n:'B',side:0,form:'&#9821;'}, {n:'Q',side:0,form:'&#9819;'},
+      {n:'K',side:0,form:'&#9818;'}, {n:'B',side:0,form:'&#9821;'},
+      {n:'N',side:0,form:'&#9822;'}, {n:'R',side:0,form:'&#9820;'},
+      {n:'p',side:0,form:'&#9823;'}, {n:'p',side:0,form:'&#9823;'},
+      {n:'p',side:0,form:'&#9823;'}, {n:'p',side:0,form:'&#9823;'},
+      {n:'p',side:0,form:'&#9823;'}, {n:'p',side:0,form:'&#9823;'},
+      {n:'p',side:0,form:'&#9823;'}, {n:'p',side:0,form:'&#9823;'},
+      {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 
+      {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 
+      {n:'p',side:1,form:'&#9817;'}, {n:'p',side:1,form:'&#9817;'},
+      {n:'p',side:1,form:'&#9817;'}, {n:'p',side:1,form:'&#9817;'},
+      {n:'p',side:1,form:'&#9817;'}, {n:'p',side:1,form:'&#9817;'},
+      {n:'p',side:1,form:'&#9817;'}, {n:'p',side:1,form:'&#9817;'},
+      {n:'R',side:1,form:'&#9814;'}, {n:'N',side:1,form:'&#9816;'},
+      {n:'B',side:1,form:'&#9815;'}, {n:'Q',side:1,form:'&#9813;'},
+      {n:'K',side:1,form:'&#9812;'}, {n:'B',side:1,form:'&#9815;'},
+      {n:'N',side:1,form:'&#9816;'}, {n:'R',side:1,form:'&#9814;'},
     ];
 
     var availableMoves = {
@@ -115,114 +115,108 @@
       R: [0,+8,+1,-1,-8], 
       B: [0,+9,+7,-7,-9],
       N: [1,+17,+15,+10,+6,-6,-10,-15,-17],
-      p: [1,+8,+16]
+      p: [1,+16,+8,-8,-16]
     };
 
-    // Инициализация поля - отображение нотации и расстановка фигур
+    // Инициализация поля, отображение нотации и расстановка фигур
 
-    for (var i = 1; i <= 8 * 8; i++) {
+    for (var i = 0; i < 64; i++) {
       cellsDOM[i] = document.createElement("div");
-      cellsDOM[i].addEventListener("click", selectedFigure);
-      cellsDOM[i].setAttribute("xpos", i);
 
       displayNotation(cellsDOM[i], i);
       displayChess(cellsDOM[i], i);
 
+      cellsDOM[i].addEventListener("click", selectedFigure);
+      cellsDOM[i].setAttribute("xpos", i);
+
       fieldDOM.appendChild(cellsDOM[i]);
     }
 
+    function displayChess(_cellDOM, i) {
+        if (field[i].n != undefined) {
+          var spanFigure = document.createElement("span");
+          spanFigure.innerHTML = field[i].form;
+          _cellDOM.appendChild(spanFigure);
+        }
+    }
 
-    function renderDisaplayField(xpos) {
+    function renderDisaplayField(xposSelectCell) {
       
-      var cellsDOM = fieldDOM.querySelectorAll('div');
-
       for (var i = 0; i < 8 * 8; i++) {
 
-        var span = cellsDOM[i].querySelector("div");
-
+        var span = cellsDOM[i].querySelector("span");
+        
         if (span != undefined ) {
           cellsDOM[i].removeChild(span);
         }
 
-        if (xpos != i+1) {
-          cellsDOM[i].classList.remove("select");
-        }
+        displayChess(cellsDOM[i], i)
 
-        displayChess(cellsDOM[i], i+1);
-        // calculationOfMoves(cellsDOM[i], xpos);
+        if (xposSelectCell != i) {
+          cellsDOM[i].classList.remove("select");
+        } else {
+          cellsDOM[i].classList.add("select");
+        }
       }
+      
+      displayMoves(xposSelectCell);
     }
 
 
-    // function calculationOfMoves(div, xpos) {
+    function displayMoves(xpos) {
 
-    //   for (var move in availableMoves) {
+      var nameFigure = field[xpos].n;
+      var sideFigure = field[xpos].side;
 
-    //     if (availableMoves[move].pos == xpos) {
-    //       activeFigure = availableMoves[move];
-    //       console.log(activeFigure);
-    //       return 1;
-    //     }
-    //   }
-    // }
+      var moves = availableMoves[nameFigure];
+
+      var direction;
+
+      for (var i = 1; i < moves.length; i++) {
+
+        direction = -1;
+
+        if (nameFigure == 'p' && sideFigure == 0 && moves[i] > 0) {
+          direction = +xpos + moves[i];
+        }
+
+        if (nameFigure == 'p' && sideFigure == 1 && moves[i] < 0) {
+          direction = +xpos + moves[i];
+        }
+
+        if (nameFigure != 'p') {
+          direction = +xpos + moves[i];
+        }
+
+        if(nameFigure == 'R'){
+          console.log("R: xpos: " + xpos + " + " + moves[i] + " - " + direction)
+        }
+
+        if (direction >= 0 && direction <= 63) {
+          cellsDOM[direction].classList.add("select");
+        }
+      }
+    }
 
 
     function selectedFigure(event) {
-      // var xpos = event.target.attributes.xpos.value;
-      // var selectCell = fieldDOM.querySelectorAll('div');
-      // var ss = fieldDOM.getElementsByClassName('select');
-
-      // selectCell[xpos-1].classList.add("select");
-
-      this.classList.add("select");
-
-      // var aa = fieldDOM.getRootNode(this);
-
-      // field[i].active = "1";
-      // activeFigure = figures[xpos-1];
-
-      
-      // renderDisaplayField(xpos);
-
-
-      // console.log(selectCell);
-      // console.log(selectCell.indexOf);
-
-      // console.log(fieldDOM.getElementsByClassName("select"));
-      
-      // fieldDOM.getElementsByClassName(".select");
-      console.log(this);
-    }
-
-    function displayChess(cell, i) {
-
-      field[i] = {xpos: i};
-
-      for (var figure in figures) {
-        if (figures[figure].pos == i) {
-          var span = document.createElement("span");
-          span.innerHTML = figures[figure].form;
-          field[i].n = figures[figure].n;
-          // span.setAttribute("name_figure", figures[figure].n);
-          // cell.addEventListener("click", selectedFigure);
-          cell.appendChild(span);
-        }
-      }
-      console.log(field[i]);
+      var target = event.target.closest("div");
+      var _xpos = target.getAttribute("xpos");
+      renderDisaplayField( _xpos );
     }
 
     function displayNotation(cell, i) {
 
-      if (i >= 1 && i <= 8) {
-        addElToLetterNum(cell, String.fromCharCode(i + 96), "top");
+      if (i >= 0 && i <= 7) {
+        addElToLetterNum(cell, String.fromCharCode(i + 97), "top");
       }
-      else if (i >= 57 && i <= 64) {
-        addElToLetterNum(cell, String.fromCharCode(i + 97 - 57), "bottom");
+      else if (i >= 56 && i <= 63) {
+        addElToLetterNum(cell, String.fromCharCode(i + 97 - 56), "bottom");
       }
-      if (i % 8 == 1) {
+      if ((i+1) % 8 == 1) {
         addElToLetterNum(cell, numNotation, "left");
       }
-      else if (i % 8 == 0) {
+      else if ((i+1) % 8 == 0) {
         addElToLetterNum(cell, numNotation--, "right");
       }
 
