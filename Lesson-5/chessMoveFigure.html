@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chess</title>
+
+  <style>
+    #field {
+      width: 400px;
+      height: 400px;
+      margin: 0 auto;
+      user-select: none;
+    }
+
+    #field div {
+      position: relative;
+      float: left;
+      width: 12.5%;
+      height: 12.5%;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    #field div.select {
+      background-color: #abd4ab;
+    }
+
+    #field {
+      background-image:
+        linear-gradient(45deg, burlywood 25%, transparent 25%),
+        linear-gradient(-45deg, burlywood 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, burlywood 75%),
+        linear-gradient(-45deg, transparent 75%, burlywood 75%);
+      background-size: 25% 25%;
+      background-position: 0 0, 0 16.64%, 16.64% -16.64%, -16.64% 0;
+    }
+
+    #field>div>em {
+      position: absolute;
+      font: bold 10px Verdana;
+    }
+
+    #field div .top {
+      left: 3px;
+      transform: rotate(180deg);
+    }
+
+    #field div .right {
+      transform: rotate(180deg);
+      right: 3px;
+    }
+
+    #field div .bottom {
+      bottom: 0;
+      right: 3px;
+    }
+
+    #field div .left {
+      left: 3px;
+      bottom: 0;
+    }
+
+    #field div span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      font: 35px Verdana;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="field"></div>
+
+  <script>
+
+    "use strict"
+
+    var fieldDOM = document.getElementById("field"), cellsDOM = [], numNotation = 8, selectedCell = null;
+
+    var field = [
+      { n: 'R', side: 0, form: '&#9820;' }, { n: 'N', side: 0, form: '&#9822;' },
+      { n: 'B', side: 0, form: '&#9821;' }, { n: 'Q', side: 0, form: '&#9819;' },
+      { n: 'K', side: 0, form: '&#9818;' }, { n: 'B', side: 0, form: '&#9821;' },
+      { n: 'N', side: 0, form: '&#9822;' }, { n: 'R', side: 0, form: '&#9820;' },
+      { n: 'p', side: 0, form: '&#9823;' }, { n: 'p', side: 0, form: '&#9823;' },
+      { n: 'p', side: 0, form: '&#9823;' }, { n: 'p', side: 0, form: '&#9823;' },
+      { n: 'p', side: 0, form: '&#9823;' }, { n: 'p', side: 0, form: '&#9823;' },
+      { n: 'p', side: 0, form: '&#9823;' }, { n: 'p', side: 0, form: '&#9823;' },
+      {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
+      {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
+      { n: 'p', side: 1, form: '&#9817;' }, { n: 'p', side: 1, form: '&#9817;' },
+      { n: 'p', side: 1, form: '&#9817;' }, { n: 'p', side: 1, form: '&#9817;' },
+      { n: 'p', side: 1, form: '&#9817;' }, { n: 'p', side: 1, form: '&#9817;' },
+      { n: 'p', side: 1, form: '&#9817;' }, { n: 'p', side: 1, form: '&#9817;' },
+      { n: 'R', side: 1, form: '&#9814;' }, { n: 'N', side: 1, form: '&#9816;' },
+      { n: 'B', side: 1, form: '&#9815;' }, { n: 'Q', side: 1, form: '&#9813;' },
+      { n: 'K', side: 1, form: '&#9812;' }, { n: 'B', side: 1, form: '&#9815;' },
+      { n: 'N', side: 1, form: '&#9816;' }, { n: 'R', side: 1, form: '&#9814;' },
+    ];
+
+    // Инициализация поля, отображение нотации и расстановка фигур
+
+    for (var i = 0; i <= 63; i++) {
+      cellsDOM[i] = document.createElement("div");
+
+      displayNotationSymbol(cellsDOM[i], i);
+      displayChessFigure(cellsDOM[i], i);
+
+      cellsDOM[i].addEventListener("click", actionFigureAndCell);
+      cellsDOM[i].setAttribute("xpos", i);
+
+      fieldDOM.appendChild(cellsDOM[i]);
+    }
+
+    function displayChessFigure(_cellDOM, i) {
+      if (field[i].n != undefined) {
+        var spanFigure = document.createElement("span");
+        spanFigure.innerHTML = field[i].form;
+        _cellDOM.appendChild(spanFigure);
+      }
+    }
+
+    function displayNotationSymbol(_cellDOM, i) {
+
+      if (i >= 0 && i <= 7) {
+        addElToLetterNum(_cellDOM, String.fromCharCode(i + 97), "top");
+      }
+      else if (i >= 56 && i <= 63) {
+        addElToLetterNum(_cellDOM, String.fromCharCode(i + 97 - 56), "bottom");
+      }
+      if ((i + 1) % 8 == 1) {
+        addElToLetterNum(_cellDOM, numNotation, "left");
+      }
+      else if ((i + 1) % 8 == 0) {
+        addElToLetterNum(_cellDOM, numNotation--, "right");
+      }
+
+      function addElToLetterNum(_cellDOM, letterNum, className) {
+        var span = document.createElement("em");
+        span.className = className;
+        span.innerHTML = letterNum;
+        _cellDOM.appendChild(span);
+      }
+    }
+
+    //  ... Дополнительные возможности ...
+
+    function actionFigureAndCell(event) {
+
+      var target = event.target.closest("div");
+      var _xpos = target.getAttribute("xpos");
+
+      if (field[_xpos].n == undefined && selectedCell == null) {
+        return 1;
+      }
+
+      if (selectedCell != null) {
+        field[selectedCell].selected = 0;
+      }
+
+      field[_xpos].selected = 1;
+
+      if (selectedCell != null && selectedCell != _xpos) {
+        field[_xpos] = field[selectedCell];
+        field[selectedCell] = {};
+        selectedCell = null;
+      } else {
+        selectedCell = _xpos;
+      }
+      renderField(_xpos);
+    }
+
+    function renderField(_xpos) {
+
+      var _span;
+
+      for (var i = 0; i <= 63; i++) {
+
+        _span = cellsDOM[i].querySelector("span");
+
+        if (_span != undefined) {
+          cellsDOM[i].removeChild(_span);
+        }
+
+        displayChessFigure(cellsDOM[i], i);
+
+        if (field[i].selected == 1) {
+          cellsDOM[i].classList.add("select");
+        } else {
+          cellsDOM[i].classList.remove("select");
+        }
+      }
+    }
+
+  </script>
+
+</body>
+
+</html>
