@@ -124,26 +124,26 @@
       }
     }
 
-    function displayNotationSymbol(cell, i) {
+    function displayNotationSymbol(_cellDOM, i) {
 
       if (i >= 0 && i <= 7) {
-        addElToLetterNum(cell, String.fromCharCode(i + 97), "top");
+        addElToLetterNum(_cellDOM, String.fromCharCode(i + 97), "top");
       }
       else if (i >= 56 && i <= 63) {
-        addElToLetterNum(cell, String.fromCharCode(i + 97 - 56), "bottom");
+        addElToLetterNum(_cellDOM, String.fromCharCode(i + 97 - 56), "bottom");
       }
       if ((i + 1) % 8 == 1) {
-        addElToLetterNum(cell, numNotation, "left");
+        addElToLetterNum(_cellDOM, numNotation, "left");
       }
       else if ((i + 1) % 8 == 0) {
-        addElToLetterNum(cell, numNotation--, "right");
+        addElToLetterNum(_cellDOM, numNotation--, "right");
       }
 
-      function addElToLetterNum(cell, letterNum, className) {
+      function addElToLetterNum(_cellDOM, letterNum, className) {
         var span = document.createElement("em");
         span.className = className;
         span.innerHTML = letterNum;
-        cell.appendChild(span);
+        _cellDOM.appendChild(span);
       }
     }
 
@@ -164,7 +164,7 @@
 
       field[_xpos].selected = 1;
 
-      if (selectedCell && selectedCell != _xpos) {
+      if (selectedCell != null && selectedCell != _xpos) {
         field[_xpos] = field[selectedCell];
         field[selectedCell] = {};
         selectedCell = null;
@@ -176,12 +176,14 @@
 
     function renderField(_xpos) {
 
+      var _span;
+
       for (var i = 0; i <= 63; i++) {
 
-        var span = cellsDOM[i].querySelector("span");
+        _span = cellsDOM[i].querySelector("span");
 
-        if (span != undefined) {
-          cellsDOM[i].removeChild(span);
+        if (_span != undefined) {
+          cellsDOM[i].removeChild(_span);
         }
 
         displayChessFigure(cellsDOM[i], i);
