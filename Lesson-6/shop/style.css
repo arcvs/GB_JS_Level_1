@@ -1,0 +1,59 @@
+#basket {
+  min-height: 165px;
+  margin: 5px;
+  background-color: aliceblue;
+  font: 300 14px Arial;
+  counter-reset: list;
+}
+#basket div {
+  position: relative;
+  padding: 10px;
+}
+#basket p {
+  position: relative;
+  padding: 10px;
+}
+#basket div:before {
+  counter-increment: list;
+  content: counter(list) " ";
+}
+#basket div span:nth-child(1) {
+  display: inline-block;
+  width: 150px;
+}
+#basket div span:nth-child(2) {
+  display: inline-block;
+  width: 40px;
+}
+#basket div span:nth-child(3) {
+  display: inline-block;
+  width: 30px;
+}
+#basket div span:nth-child(3):before {
+  display: inline-block;
+  padding-right: 5px;
+  content: "x";
+}
+#basket div span:nth-child(4) {
+  display: inline-block;
+  width: 65px;
+}
+#basket div span:nth-child(4):before {
+  display: inline-block;
+  padding-right: 10px;
+  content: "=";
+}
+
+#products div {
+  float: left;
+  text-align: center;
+  margin: 10px;
+  font: 500 18px Verdana;
+}
+#products div img{
+  width: 200px;
+}
+#products div span{
+  display: block;
+  padding: 5px 0;
+}

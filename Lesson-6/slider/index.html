@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Slider</title>
+  <style>
+    #slider img {
+      width: 300px;
+      margin: 5px 0;
+    }
+
+    #slider div {
+      width: 490px;
+      margin: 5px 10px;
+      font: 500 25px Arial;
+      text-align: center;
+      padding-top: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="slider"></div>
+  <button id="button_left">Left</button>
+  <button id="button_right">Right</button>
+
+  <script>
+
+    "use strict"
+
+    var blockDOMImage = document.getElementById("slider");
+    var buttonLeft = document.getElementById("button_left");
+    var buttonRight = document.getElementById("button_right");
+
+    var baseCar = [
+      { name: "Lexus_2019_RC_F" },
+      { name: "Lexus_2019_UX_200" },
+      { name: "Lexus_2019_RX_350" }
+    ];
+
+    var positionId = 0;
+
+    // Инициализация первой картинки
+    createReplaceImageElement(0);
+
+    buttonLeft.addEventListener("click", slideLeft);
+    buttonRight.addEventListener("click", slideRight);
+
+    function slideLeft() {
+      if (positionId > 0) {
+        createReplaceImageElement( --positionId );
+      }
+    }
+
+    function slideRight() {
+      if (positionId < baseCar.length-1) {
+        createReplaceImageElement( ++positionId );
+      }
+    }
+
+    function createReplaceImageElement( id ) {
+
+      var _pathToImg = "img/" + baseCar[id].name + ".jpg";
+      var newImgDOM = document.createElement("img");
+      newImgDOM.setAttribute("src", _pathToImg);
+      blockDOMImage.innerHTML = "";
+      blockDOMImage.appendChild(newImgDOM);
+    }
+
+  </script>
+</body>
+
+</html>

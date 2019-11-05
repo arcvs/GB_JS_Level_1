@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
+  <title>Shop</title>
+</head>
+
+<body>
+  <div id="basket"></div>
+  <div id="products"></div>
+
+  <script>
+
+    "use strict"
+
+    var basketDOM = document.getElementById("basket");
+    var productsDOM = document.getElementById("products");
+
+    var products = [
+      { id: 0, name: "Lexus_2019_RC_F", price: 3400, img: "Lexus_2019_RC_F.jpg" },
+      { id: 1, name: "Lexus_2019_UX_200", price: 2700, img: "Lexus_2019_UX_200.jpg" },
+      { id: 2, name: "Lexus_2019_RX_350", price: 1900, img: "Lexus_2019_RX_350.jpg" }
+    ];
+
+    var basket = [];
+
+    // Отрисовка карточек товара
+    for (var i = 0; i < products.length; i++) {
+      createCardProduct(products[i].id)
+    }
+
+    function addToBasket() {
+      var productId = event.target.id;
+      basket.push(products[productId]);
+      renderBasket();
+    }
+
+    function renderBasket() {
+
+      var sumTotal = 0
+        , normalBasket = normalizeBasket(basket)
+        , itemBaskeElem;
+
+      basketDOM.innerHTML = "";
+
+      for (var item in normalBasket) {
+        itemBaskeElem = document.createElement("div");
+        itemBaskeElem.innerHTML = "<span>" + normalBasket[item].name + "</span> ";
+        itemBaskeElem.innerHTML += "<span>" + normalBasket[item].price + "</span> ";
+        itemBaskeElem.innerHTML += "<span>" + normalBasket[item].count + "</span> ";
+        itemBaskeElem.innerHTML += "<span>" + normalBasket[item].sum + "</span> ";
+        basketDOM.appendChild(itemBaskeElem);
+        sumTotal += normalBasket[item].sum;
+      }
+
+      itemBaskeElem = document.createElement("p");
+      itemBaskeElem.innerHTML += "<b>Итого: " + sumTotal + "</b>";
+      basketDOM.appendChild(itemBaskeElem);
+    }
+
+
+    function createCardProduct(id) {
+
+      var productElement = document.createElement("div");
+      var nameElement = document.createElement("span");
+      var imageElement = document.createElement("img");
+      var priceElement = document.createElement("span");
+      var buttonElement = document.createElement("button");
+
+      nameElement.innerHTML = products[id].name;
+
+      var _pathToImg = "img/" + products[id].img;
+      imageElement.setAttribute("src", _pathToImg);
+
+      priceElement.innerHTML = products[id].price;
+
+      buttonElement.innerHTML = "Купить";
+      buttonElement.setAttribute("id", id);
+      buttonElement.addEventListener("click", addToBasket);
+
+      productElement.appendChild(nameElement);
+      productElement.appendChild(imageElement);
+      productElement.appendChild(priceElement);
+      productElement.appendChild(buttonElement);
+
+      productsDOM.appendChild(productElement);
+    }
+
+
+    function normalizeBasket(_basket) {
+
+      var normalize = {};
+
+      for (var i = 0; i < _basket.length; i++) {
+
+        if( !normalize[_basket[i].id] ) {
+          normalize[_basket[i].id] = _basket[i];
+          normalize[_basket[i].id].sum = _basket[i].price;
+          normalize[_basket[i].id].count = 1;
+        } else {
+          normalize[_basket[i].id].sum += _basket[i].price;
+          normalize[_basket[i].id].count++;
+        }
+      }
+
+      return normalize;
+    }
+
+  </script>
+</body>
+
+</html>
