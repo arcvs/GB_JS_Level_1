@@ -78,50 +78,30 @@
         <p id="stats"></p>
       </div>
       <div id="gameZone"></div>
-      <div id="stats">arcvs@2017</div>
+      <div id="stats">arcvs@2019</div>
     </div>
   </div>
 
   <script>
     "use strict"
 
-    var LEFT = 37;
-    var UP = 38;
-    var RIGHT = 39;
-    var DOWN = 40;
-    var PAUSE = 32;
-    var BUFFER_KEY;
-
-//     function Field(cols, rows) {
-//       this.cols = cols;
-//       this.rows = rows;
-//       this.countSectors = this.cols * this.rows;
-
-//       this.hunger = false;
-//       this.positionMeat;
-//       this.cells;
-//     };
-
-    var gameBlockId = document.getElementById('gameZone');
-    var statsBlockId = document.getElementById('stats');
-
-    var cols = 28
+    var cols = 20
       , rows = 20
       , countSectors = cols * rows
       , widthFildPx = cols * 15 + cols
       , cells = null
       , cellDivElement
-      , python = setStartPositionPython();
+      , direction = { x: 1, y: 0 }
+      , python = setStartPositionPartPython();
 
-    function setStartPositionPython() {
+    function setStartPositionPartPython() {
       var position = cols * rows / 2 - cols / 2;
       return [position, position - 1];
     };
 
-    generationMap();
-    generationMeat();
-
-//     console.dir(gameBlockId)
+    var gameBlockId = document.getElementById('gameZone');
+    var statsBlockId = document.getElementById('stats');
+    document.addEventListener('keydown', dispatcherEventKey);
 
     function generationMap(cols, rows) {
 
@@ -135,45 +115,93 @@
     };
 
 
-//     function converterPositionToAxes(field, a) {
-//       var x = a % field.cols;
-//       var y = Math.floor(a / field.cols);
-//       return { x: x, y: y };
-//     };
+    function converterPositionToAxes(field, a) {
+      var x = a % field.cols;
+      var y = Math.floor(a / field.cols);
+      return { x: x, y: y };
+    };
 
-    function convertAxesToPosition(a, b) {
-      var position = b * cols + a;
+    function convertAxesToPosition(direction) {
+      var position = direction.y * cols + direction.x;
       return position;
     };
 
+    function movementPython(_position) {
 
-    function displayPython() {
-      for (var i in python) {
-//         console.log( (i ? '_body' : '_head') )
-        cells[python[i]].className = 'active' + (i == 0 ? '_head' : '_body'); 
+      var firstPart = python[0];
+
+      python[0] += _position;
+      cells[python[0]].className = 'active_head';
+      cells[python[python.length - 1]].className = '';
+
+      for (var i = 1; i < python.length; i++) {
+        python[i] = firstPart;
+        cells[python[i]].className = 'active_body';
       }
+      // console.log(python)
     }
 
-    displayPython()
+    function definitionTransparentWalls() {
+      
+    }
 
-//     console.dir(cells)
+    function dispatcherEventKey(e) {
+
+      switch (e.keyCode) {
+        case 38:
+          if (direction.y != +1) {
+            direction = { x: 0, y: -1 };
+          }
+          break;
+
+        case 40:
+          if (direction.y != -1) {
+            direction = { x: 0, y: +1 };
+          }
+          break;
+
+        case 37:
+          if (direction.x != +1) {
+            direction = { x: -1, y: 0 };
+          }
+          break;
+
+        case 39:
+          if (direction.x != -1) {
+            direction = { x: +1, y: 0 };
+          }
+          break;
+
+        case 32: game.pause(); break;
+      };
+      console.log(direction)
+    };
+
+    // document.onkeydown = function (event) {
+    //   if ((event.keyCode >= 32) && (event.keyCode <= 40)) {
+    //     dispatcherEventKey(event.keyCode);
+    //   };
+    // };
+
+    // displayPython()
+    // console.dir(cells)
 
     var timerIteration = setInterval(function () {
-      if (field.hunger) {
-        self.speed -= 5;
-        statsBlockId.innerHTML = 'Speed: ' + self.speed + 'ms';
-        clearInterval(timerIteration);
-        setTime();
-      }
-      python();
-//       if (self.active && !self.gameover) {
-//         python.render();
-//       }
-    }, 200)
+      // if (1) {
+      //   self.speed -= 5;
+      //   statsBlockId.innerHTML = 'Speed: ' + self.speed + 'ms';
+      //   clearInterval(timerIteration);
+      //   setTime();
+      // }
+      movementPython(convertAxesToPosition(direction));
+      //       if (self.active && !self.gameover) {
+      //         python.render();
+      //       }
+    }, 500)
 
 
 
-    function generationMeat (python) {
+    function generationMeat(python) {
 
 
       function getRandomInt(min, max) {
@@ -182,15 +210,15 @@
 
       (function checkPositionPythonAndMeat() {
         var positionMeat = getRandomInt(0, countSectors - 1);
-//         python.forEach(function (item, i) {
-//           if (item === positionMeat) {
-//             return checkPositionPythonAndMeat();
-//           }
-//         })
+        //  python.forEach(function (item, i) {
+        //    if (item === positionMeat) {
+        //      return checkPositionPythonAndMeat();
+        //    }
+        //  })
       })()
 
-//       this.hunger = false;
-//       this.cells[this.positionMeat].className = 'meat';
+      //  this.hunger = false;
+      //  this.cells[this.positionMeat].className = 'meat';
     };
 
 
@@ -218,9 +246,9 @@
           this.body[i] = isNaN(this.nextPositionStep) ? backStep : this.nextPositionStep;
         }
 
-//         if (game.gameover) {
-//           return 0;
-//         }
+        //  if (game.gameover) {
+        //    return 0;
+        //  }
 
         field.cells[this.body[i]].className = 'active' + (!i ? 0 : '');
 
@@ -230,8 +258,6 @@
         }
       }
     };
-
-
 
 
     Python.prototype.render = function () {
@@ -247,7 +273,6 @@
       if (head.x >= field.cols) head.x = 0;
       if (head.y >= field.rows) head.y = 0;
     };
-
 
 
     Python.prototype.deadLoop = function (positionHead) {
@@ -305,37 +330,15 @@
     Game.prototype.pause = function () {
       this.active = (this.active === 0) ? 1 : 0;
     }
-
-    function dispatcherEventKey(keyCode) {
-
-      if (BUFFER_KEY) {
-        if (BUFFER_KEY === DOWN && keyCode === UP) return 1;
-        if (BUFFER_KEY === UP && keyCode === DOWN) return 1;
-        if (BUFFER_KEY === RIGHT && keyCode === LEFT) return 1;
-        if (BUFFER_KEY === LEFT && keyCode === RIGHT) return 1;
-      }
-
-      BUFFER_KEY = keyCode;
-
-      switch (keyCode) {
-        case UP: python.direction = { x: 0, y: -1 }; game.start(); break;
-        case DOWN: python.direction = { x: 0, y: +1 }; game.start(); break;
-        case LEFT: python.direction = { x: -1, y: 0 }; game.start(); break;
-        case RIGHT: python.direction = { x: +1, y: 0 }; game.start(); break;
-        case PAUSE: game.pause(); break;
-      };
-    };
-
-    document.onkeydown = function (event) {
-      if ((event.keyCode >= 32) && (event.keyCode <= 40)) {
-        dispatcherEventKey(event.keyCode);
-      };
-    };
-
     // var game = new Game();
     // var field = new Field(28, 20);
     // var python = new Python(game, field);
     // game.run(field, python);
+
+
+
+    generationMap();
+    generationMeat();
 
   </script>
 
