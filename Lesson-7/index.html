@@ -25,13 +25,13 @@
       white-space: nowrap;
       text-align: center;
       font-size: 0;
+    }
 
-      &:before {
-        height: 100%;
-        display: inline-block;
-        vertical-align: middle;
-        content: '';
-      }
+    .wrap:before {
+      height: 100%;
+      display: inline-block;
+      vertical-align: middle;
+      content: '';
     }
 
     .content {
@@ -83,19 +83,20 @@
   </div>
 
   <script>
+
     "use strict"
 
     var cols = 20
-      , rows = 20
+      , rows = 15
       , countSectors = cols * rows
       , widthFildPx = cols * 15 + cols
       , cells = null
       , cellDivElement
-      , direction = { x: 1, y: 0 }
-      , python = setStartPositionPartPython();
+      , direction = { x: +1, y: 0 }
+      , python = setStartPositionPartsPython();
 
-    function setStartPositionPartPython() {
-      var position = cols * rows / 2 - cols / 2;
+    function setStartPositionPartsPython() {
+      var position = cols * rows / 2;
       return [position, position - 1];
     };
 
@@ -115,9 +116,9 @@
     };
 
 
-    function converterPositionToAxes(field, a) {
-      var x = a % field.cols;
-      var y = Math.floor(a / field.cols);
+    function converterPositionToAxes(_positionNum) {
+      var x = _positionNum % cols;
+      var y = Math.floor(_positionNum / cols);
       return { x: x, y: y };
     };
 
@@ -126,11 +127,22 @@
       return position;
     };
 
-    function movementPython(_position) {
+    function movementPython() {
+
+      var _positionNum = convertAxesToPosition(direction);
 
       var firstPart = python[0];
 
-      python[0] += _position;
+      var stepThroughWall = moveThroughWall(python[0]);
+      
+      if (stepThroughWall !== undefined) {
+        python[0] = stepThroughWall;
+      } else {
+        python[0] += _positionNum;
+      }
+
+      // console.log(a);
+
       cells[python[0]].className = 'active_head';
       cells[python[python.length - 1]].className = '';
 
@@ -138,11 +150,14 @@
         python[i] = firstPart;
         cells[python[i]].className = 'active_body';
       }
-      // console.log(python)
     }
 
-    function definitionTransparentWalls() {
-      
+    function moveThroughWall(_positionNum) {
+      var coordinates = converterPositionToAxes(_positionNum);
+      if (direction.x == -1 && coordinates.x - 1 < 0) return _positionNum + cols - 1;
+      if (direction.y == -1 && coordinates.y - 1 < 0) return cols * (rows-1) + _positionNum;
+      if (direction.x == +1 && coordinates.x + 1 >= cols) return _positionNum - cols + 1;
+      if (direction.y == +1 && coordinates.y + 1 >= rows) return _positionNum % cols;
     }
 
     function dispatcherEventKey(e) {
@@ -183,9 +198,6 @@
     //   };
     // };
 
-    // displayPython()
-    // console.dir(cells)
-
     var timerIteration = setInterval(function () {
       // if (1) {
       //   self.speed -= 5;
@@ -193,7 +205,7 @@
       //   clearInterval(timerIteration);
       //   setTime();
       // }
-      movementPython(convertAxesToPosition(direction));
+      movementPython();
       //       if (self.active && !self.gameover) {
       //         python.render();
       //       }
@@ -202,8 +214,7 @@
 
 
     function generationMeat(python) {
-
-
+      
       function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
