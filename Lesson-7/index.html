@@ -62,7 +62,7 @@
       , positionFood = []
       , positionObstacle
       , countOfFoodEaten = 0
-      , speedOfMovement = 400
+      , speedOfMovement = 300
       , isPauesed = false;
 
     // Высчитывает начальные позиции для змейки
@@ -74,7 +74,7 @@
     var gameBlockId = document.getElementById('gameZone');
     var infoBlockId = document.getElementById('info');
     document.addEventListener('keydown', dispatcherEventKey);
-    // Указывает размер блока в стилях
+    // Указывает в стиле размер блока
     gameBlockId.style.width = widthFildPx + "px";
 
     function generationMap(cols, rows) {
@@ -122,12 +122,12 @@
         createPositionFood();
         levelGameUp();
       }
+      // console.log(positionFood)
 
       // Проверяет задана ли позиция для препятствия
-      if (!positionObstacle) {
+      if (positionObstacle == undefined) {
         createPositionObstacle();
       }
-
       // Попала ли голова змейки в искуственную стенку
       if (python[0] == positionObstacle) {
         alert("Змейка разбилась об стенку!! Вы проиграли..");
@@ -166,14 +166,14 @@
       return _positionHeadNum += _positionNewStepNum;
     }
     
-    // Конвертирует декартову систему координат в однуосевую
+    // Конвертирует позицию на одной оси в декартову систему
     function converterPositionToAxes(_positionNum) {
       var x = _positionNum % cols;
       var y = Math.floor(_positionNum / cols);
       return { x: x, y: y };
     };
-
-    // Конвертирует позицию на одной оси в декартову систему
+    
+    // Конвертирует декартову систему координат в однуосевую
     function convertAxesToPosition(direction) {
       var position = direction.y * cols + direction.x;
       return position;
