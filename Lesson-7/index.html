@@ -63,9 +63,9 @@
       , positionObstacle
       , countOfFoodEaten = 0
       , speedOfMovement = 400
-      , isPauesed = false
-      , timerIteration;
+      , isPauesed = false;
 
+    // Высчитывает начальные позиции для змейки
     function setStartPositionPartsPython() {
       var position = cols * rows / 2;
       return [position, position - 1];
@@ -74,6 +74,7 @@
     var gameBlockId = document.getElementById('gameZone');
     var infoBlockId = document.getElementById('info');
     document.addEventListener('keydown', dispatcherEventKey);
+    // Указывает размер блока
     gameBlockId.style.width = widthFildPx + "px";
 
     function generationMap(cols, rows) {
@@ -83,27 +84,19 @@
       }
     };
 
-    function converterPositionToAxes(_positionNum) {
-      var x = _positionNum % cols;
-      var y = Math.floor(_positionNum / cols);
-      return { x: x, y: y };
-    };
-
-    function convertAxesToPosition(direction) {
-      var position = direction.y * cols + direction.x;
-      return position;
-    };
-
+    // Высчитывает все события на поле связанные со змейкой
     function movementPython() {
 
       var lastPart = python[python.length - 1];
 
+      // Когда проглоченная еда достигает конца хвоста змейка подрастает
       if (lastPart == positionFood[0]) {
         python.push(positionFood.shift())
       }
 
       cells[lastPart].className = '';
 
+      // Указывает для каждой части тела змейки позиции от предидущей части тела
       for (var i = python.length - 1; i > 0; i--) {
         python[i] = python[i - 1];
         cells[python[i]].className = 'part_body';
@@ -111,36 +104,42 @@
 
       var _positionAddNewStepNum = convertAxesToPosition(direction);
 
+      // Проверяет присутсвует ли голова на следущем ходу в собственном теле
       if (python.includes(python[0] + _positionAddNewStepNum)) {
-        alert("Караул.. змейка ест сама себя!! Вы проиграли..");
+        alert("Караул.. змейка ест саму себя!! Вы проиграли..");
         location.reload();
       }
 
       // python[0] += _positionAddNewStepNum;
 
+      // Высчитывает следующий ход, когда стены прозрачные
       python[0] = moveThroughWall(python[0], _positionAddNewStepNum);
       cells[python[0]].className = 'part_head';
 
+      // Проверяет равны ли координаты головы змейки и еды
+      // повышает уровень сложности и создает новоую еду
       if (python[0] == positionFood[0]) {
         createPositionFood();
         levelGameUp();
       }
 
-
+      // Проверяет заданы ли координаты для препятствия
       if (!positionObstacle) {
         createPositionObstacle();
       }
 
+      // Попала ли голова змейки в стенку
       if (python[0] == positionObstacle) {
         alert("Змейка разбилась об стенку!! Вы проиграли..");
         location.reload();
       }
     }
 
+    // Создает еду на поле
     function createPositionFood() {
       var _num = Math.floor(Math.random() * countSectors);
       if (python.includes(_num)) {
-        console.log("Ппц.. Еда сама хотела попасть сразу в желудок змейки");
+        console.log("Ппц.. Еда сама хотела попасть в желудок змейки, не через рот");
         createPositionFood();
         return;
       }
@@ -148,6 +147,7 @@
       cells[_num].className = 'food';
     }
 
+    // Высчитывает координаты нового хода для головы змейки  
     function moveThroughWall(_positionHeadNum, _positionAddStepNum) {
       var axesHead = converterPositionToAxes(_positionHeadNum);
 
@@ -165,6 +165,19 @@
 
       return _positionHeadNum += _positionAddStepNum;
     }
+    
+    // Конвертирует декартову систему координат в однуосевую
+    function converterPositionToAxes(_positionNum) {
+      var x = _positionNum % cols;
+      var y = Math.floor(_positionNum / cols);
+      return { x: x, y: y };
+    };
+
+    // Конвертирует позицию на одной оси в декартову систему
+    function convertAxesToPosition(direction) {
+      var position = direction.y * cols + direction.x;
+      return position;
+    };
 
     function dispatcherEventKey(e) {
 
@@ -191,6 +204,8 @@
       infoBlockId.innerHTML = 'Food: ' + countOfFoodEaten + ' / Speed: ' + speedOfMovement + 'ms';
     }
 
+
+    // Функция изменяет темп игры и подсчитывает съеденную еду
     function levelGameUp() {
       ++countOfFoodEaten;
       speedOfMovement -= 10;
@@ -199,25 +214,25 @@
       infoGame();
     }
 
-
+    // Запуск таймера с изменяющимися интеравалами в меньшую сторону
+    // Инициирует движение змейки 
     var timerIteration;
 
     function startTimerOfIterationGame() {
       timerIteration = setInterval(function () {
         if (!isPauesed) {
           movementPython();
-          console.log(positionFood);
         }
       }, speedOfMovement);
     }
 
-    generationMap();
     infoGame();
+    generationMap();
     startTimerOfIterationGame();
     createPositionFood();
 
-
-
+    // Самовызывающиеся функция создает таймер для 
+    // временного отображения препятствий 
     var ticksForObstacle;
 
     function startTimerOfObstacle() {
@@ -227,10 +242,10 @@
         return;
       }
       ticksForObstacle--;
-      // console.log(ticksForObstacle);
       setTimeout(startTimerOfObstacle, 1000);
     }
 
+    // Функция создает препятсвие
     function createPositionObstacle() {
       var _num = Math.floor(Math.random() * countSectors);
 
