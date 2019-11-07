@@ -96,7 +96,7 @@
 
       cells[lastPart].className = '';
 
-      // Указывает для каждой части тела змейки позиции от предидущей части тела
+      // Задает для каждой части тела змейки позиции предыдущей части тела
       for (var i = python.length - 1; i > 0; i--) {
         python[i] = python[i - 1];
         cells[python[i]].className = 'part_body';
@@ -117,18 +117,18 @@
       cells[python[0]].className = 'part_head';
 
       // Проверяет равны ли координаты головы змейки и еды
-      // повышает уровень сложности и создает новоую еду
+      // повышает уровень сложности и создает новую еду
       if (python[0] == positionFood[0]) {
         createPositionFood();
         levelGameUp();
       }
 
-      // Проверяет заданы ли координаты для препятствия
+      // Проверяет задана ли позиция для препятствия
       if (!positionObstacle) {
         createPositionObstacle();
       }
 
-      // Попала ли голова змейки в стенку
+      // Попала ли голова змейки в искуственную стенку
       if (python[0] == positionObstacle) {
         alert("Змейка разбилась об стенку!! Вы проиграли..");
         location.reload();
@@ -139,7 +139,7 @@
     function createPositionFood() {
       var _num = Math.floor(Math.random() * countSectors);
       if (python.includes(_num)) {
-        console.log("Ппц.. Еда сама хотела попасть в желудок змейки, не через рот");
+        console.log("Ппц.. Еда сама хотела попасть сразу в желудок змейки");
         createPositionFood();
         return;
       }
@@ -204,7 +204,6 @@
       infoBlockId.innerHTML = 'Food: ' + countOfFoodEaten + ' / Speed: ' + speedOfMovement + 'ms';
     }
 
-
     // Функция изменяет темп игры и подсчитывает съеденную еду
     function levelGameUp() {
       ++countOfFoodEaten;
@@ -214,7 +213,7 @@
       infoGame();
     }
 
-    // Запуск таймера с изменяющимися интеравалами в меньшую сторону
+    // Запуск таймера с изменяющимися интеравалами в меньшую сторону по уровню
     // Инициирует движение змейки 
     var timerIteration;
 
