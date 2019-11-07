@@ -3,8 +3,6 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Snake Game</title>
   <style>
     body {
@@ -25,16 +23,20 @@
       border-bottom: 1px solid #f7fbfd;
     }
 
-    .active_body {
+    .part_body {
       background: #00C790;
     }
 
-    .active_head {
+    .part_head {
       background: #008080;
     }
 
     .food {
       background: #8A9DE1;
+    }
+
+    .obstacle {
+      background: #e18abd;
     }
   </style>
 </head>
@@ -44,23 +46,25 @@
   <h1>Python</h1>
   <p id="info">:</p>
   <div id="gameZone"></div>
-  <p> [ENTER] = New game, [SPACE] = Pause</p>
+  <p> [SPACE] = Start / Pause, [ENTER] = New game</p>
 
   <script>
 
     "use strict"
 
-    var cols = 20
-      , rows = 15
+    var cols = 24
+      , rows = 20
       , countSectors = cols * rows
       , widthFildPx = cols * 15 + cols
-      , cells = null
-      , cellDivElement
+      , cells = []
       , direction = { x: +1, y: 0 }
       , python = setStartPositionPartsPython()
-      , positionFoodNum = null
+      , positionFood = []
+      , positionObstacle
+      , countOfFoodEaten = 0
+      , speedOfMovement = 400
       , isPauesed = false
-      , timeIntervalMove = 500;
+      , timerIteration;
 
     function setStartPositionPartsPython() {
       var position = cols * rows / 2;
@@ -68,18 +72,15 @@
     };
 
     var gameBlockId = document.getElementById('gameZone');
-    var statsBlockId = document.getElementById('info');
+    var infoBlockId = document.getElementById('info');
     document.addEventListener('keydown', dispatcherEventKey);
+    gameBlockId.style.width = widthFildPx + "px";
 
     function generationMap(cols, rows) {
-
       for (var i = 0; i < countSectors; i++) {
-        cellDivElement = document.createElement("div");
-        gameBlockId.appendChild(cellDivElement);
+        cells[i] = document.createElement("div");
+        gameBlockId.appendChild(cells[i]);
       }
-
-      gameBlockId.style.width = widthFildPx + "px";
-      cells = gameBlockId.querySelectorAll("div");
     };
 
     function converterPositionToAxes(_positionNum) {
@@ -95,33 +96,56 @@
 
     function movementPython() {
 
-      var firstPart = python[0];
+      var lastPart = python[python.length - 1];
+
+      if (lastPart == positionFood[0]) {
+        python.push(positionFood.shift())
+      }
+
+      cells[lastPart].className = '';
+
+      for (var i = python.length - 1; i > 0; i--) {
+        python[i] = python[i - 1];
+        cells[python[i]].className = 'part_body';
+      }
 
       var _positionAddNewStepNum = convertAxesToPosition(direction);
-      // python[0] = moveThroughWall(python[0], _positionAddNewStepNum);
-        // cells[python[i]].className = '';
-        // cells[python[i]].className = 'active_body';
-      // python.unshift(python.pop());
-      python[0] += _positionAddNewStepNum;
 
-      // console.log(python);
-
-      if (python[0] == positionFoodNum) {
-        // console.log(positionFoodNum)
-        python.push(0);
-        // console.log(firstPart);
-        positionFoodNum = null;
+      if (python.includes(python[0] + _positionAddNewStepNum)) {
+        alert("Караул.. змейка ест сама себя!! Вы проиграли..");
+        location.reload();
       }
-        
-      // cells[python[0]].className = 'active_head';
 
-      
-      for (var i = 0; i < python.length; i++) {
-        cells[python[i]].className = '';
-        cells[python[i]].className = 'active_body';
-        // python[i] = python[i];
-        // console.log(python);
+      // python[0] += _positionAddNewStepNum;
+
+      python[0] = moveThroughWall(python[0], _positionAddNewStepNum);
+      cells[python[0]].className = 'part_head';
+
+      if (python[0] == positionFood[0]) {
+        createPositionFood();
+        levelGameUp();
       }
+
+
+      if (!positionObstacle) {
+        createPositionObstacle();
+      }
+
+      if (python[0] == positionObstacle) {
+        alert("Змейка разбилась об стенку!! Вы проиграли..");
+        location.reload();
+      }
+    }
+
+    function createPositionFood() {
+      var _num = Math.floor(Math.random() * countSectors);
+      if (python.includes(_num)) {
+        console.log("Ппц.. Еда сама хотела попасть сразу в желудок змейки");
+        createPositionFood();
+        return;
+      }
+      positionFood.push(_num);
+      cells[_num].className = 'food';
     }
 
     function moveThroughWall(_positionHeadNum, _positionAddStepNum) {
@@ -158,96 +182,69 @@
 
       if (e.keyCode == 32)
         isPauesed = (!isPauesed) ? true : false;
+
+      if (e.keyCode == 13)
+        location.reload();
     };
 
-    var timerIteration = setInterval(function () {
-      if (!isPauesed) {
-        movementPython();
-        createPositionFood();
-      }
-    }, timeIntervalMove)
+    function infoGame() {
+      infoBlockId.innerHTML = 'Food: ' + countOfFoodEaten + ' / Speed: ' + speedOfMovement + 'ms';
+    }
 
-    function createPositionFood() {
-      if (!positionFoodNum) {
-        positionFoodNum = Math.floor(Math.random() * (countSectors - 0));
-        if (python.includes(positionFoodNum)) {
-          positionFoodNum = null;
-          console.log("Еда попала сразу в желудок змейки")
-          createPositionFood();
-          return;
+    function levelGameUp() {
+      ++countOfFoodEaten;
+      speedOfMovement -= 10;
+      clearInterval(timerIteration);
+      startTimerOfIterationGame();
+      infoGame();
+    }
+
+
+    var timerIteration;
+
+    function startTimerOfIterationGame() {
+      timerIteration = setInterval(function () {
+        if (!isPauesed) {
+          movementPython();
+          console.log(positionFood);
         }
-        cells[positionFoodNum].className = 'food';
-      }
+      }, speedOfMovement);
     }
-
-    // Python.prototype.throughWallsOn = function (head) {
-    //   if (head.x < 0) head.x = field.cols - 1;
-    //   if (head.y < 0) head.y = field.rows - 1;
-    //   if (head.x >= field.cols) head.x = 0;
-    //   if (head.y >= field.rows) head.y = 0;
-    // };
-
-    // Python.prototype.deadLoop = function (positionHead) {
-    //   this.body.forEach(function (posPart, i) {
-    //     if (positionHead === posPart && i !== 0) {
-    //       game.gameover = 1;
-    //       field.cells[posPart].style.background = 'red';
-    //     }
-    //   });
-    // };
-
-    // Python.prototype.eatsMeat = function (positionHead) {
-    //   if (positionHead === field.positionMeat) {
-    //     this.body.push(0);
-    //     field.hunger = true;
-    //   }
-    // };
-
-    function Game() {
-      this.speed = 200;
-      this.active = 0;
-      this.gameover = 0;
-      //this.level = 1;
-      this.life = 5;
-    }
-
-    Game.prototype.run = function (field, python) {
-
-      var self = this;
-
-      python.render();
-      statsBlockId.innerHTML = 'Speed: ' + this.speed + 'ms';
-      BUFFER_KEY = undefined;
-
-      (function setTime() {
-        field.generationMeat(python.body);
-        var timerIteration = setInterval(function () {
-          if (field.hunger) {
-            self.speed -= 5;
-            statsBlockId.innerHTML = 'Speed: ' + self.speed + 'ms';
-            clearInterval(timerIteration);
-            setTime();
-          }
-          if (self.active && !self.gameover) {
-            python.render();
-          }
-        }, self.speed);
-      })()
-    };
-
-    Game.prototype.start = function () {
-      this.active = 1;
-    }
-
-    Game.prototype.pause = function () {
-      this.active = (this.active === 0) ? 1 : 0;
-    }
-    // var game = new Game();
-    // var field = new Field(28, 20);
-    // var python = new Python(game, field);
-    // game.run(field, python);
 
     generationMap();
+    infoGame();
+    startTimerOfIterationGame();
+    createPositionFood();
+
+
+
+    var ticksForObstacle;
+
+    function startTimerOfObstacle() {
+      if (ticksForObstacle < 0) {
+        cells[positionObstacle].className = '';
+        positionObstacle = null;
+        return;
+      }
+      ticksForObstacle--;
+      // console.log(ticksForObstacle);
+      setTimeout(startTimerOfObstacle, 1000);
+    }
+
+    function createPositionObstacle() {
+      var _num = Math.floor(Math.random() * countSectors);
+
+      if (python.includes(_num)) {
+        createPositionObstacle();
+        return;
+      }
+
+      ticksForObstacle = 5;
+      startTimerOfObstacle();
+      
+      positionObstacle = _num;
+      cells[_num].className = 'obstacle';
+    }
 
   </script>
 
