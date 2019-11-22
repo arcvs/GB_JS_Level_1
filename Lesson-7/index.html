@@ -86,14 +86,11 @@
 
     // Высчитывает все события на поле связанные со змейкой
     function movementPython() {
-
       var lastPart = python[python.length - 1];
-
       // Когда проглоченная еда достигает конца хвоста змейка подрастает
       if (lastPart == positionFood[0]) {
         python.push(positionFood.shift())
       }
-
       cells[lastPart].className = '';
 
       // Задает для каждой части тела змейки позиции предыдущей части тела
@@ -111,7 +108,6 @@
       }
 
       // python[0] += _positionNewStepNum;
-
       // Высчитывает следующий ход, когда стены прозрачные
       python[0] = moveThroughWall(python[0], _positionNewStepNum);
       cells[python[0]].className = 'part_head';
@@ -122,12 +118,13 @@
         createPositionFood();
         levelGameUp();
       }
+      
       // console.log(positionFood)
-
       // Проверяет задана ли позиция для препятствия
       if (positionObstacle == undefined) {
         createPositionObstacle();
       }
+
       // Попала ли голова змейки в искуственную стенку
       if (python[0] == positionObstacle) {
         alert("Змейка разбилась об стенку!! Вы проиграли..");
@@ -165,14 +162,14 @@
 
       return _positionHeadNum += _positionNewStepNum;
     }
-    
+
     // Конвертирует позицию на одной оси в декартову систему
     function converterPositionToAxes(_positionNum) {
       var x = _positionNum % cols;
       var y = Math.floor(_positionNum / cols);
       return { x: x, y: y };
     };
-    
+
     // Конвертирует декартову систему координат в однуосевую
     function convertAxesToPosition(direction) {
       var position = direction.y * cols + direction.x;
@@ -216,7 +213,6 @@
     // Запуск таймера с изменяющимися интеравалами в меньшую сторону по уровню
     // Инициирует движение змейки 
     var timerIteration;
-
     function startTimerOfIterationGame() {
       timerIteration = setInterval(function () {
         if (!isPauesed) {
@@ -233,7 +229,6 @@
     // Самовызывающиеся функция создает таймер для 
     // временного отображения препятствий 
     var ticksForObstacle;
-
     function startTimerOfObstacle() {
       if (ticksForObstacle < 0) {
         cells[positionObstacle].className = '';
@@ -247,21 +242,17 @@
     // Функция создает препятсвие
     function createPositionObstacle() {
       var _num = Math.floor(Math.random() * countSectors);
-
       if (python.includes(_num)) {
         createPositionObstacle();
         return;
       }
-
       ticksForObstacle = 5;
       startTimerOfObstacle();
-      
+
       positionObstacle = _num;
       cells[_num].className = 'obstacle';
     }
-
   </script>
-
 </body>
 
 </html>
